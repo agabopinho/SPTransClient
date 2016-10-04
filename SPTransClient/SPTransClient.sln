@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SPTransClient", "SPTransClient\SPTransClient.csproj", "{DBD77C95-5464-4882-9E6C-CE2B41BA7397}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SPTransClientTests", "SPTransClientTests\SPTransClientTests.csproj", "{2B502943-782A-4BDE-9B38-9AFC2C2EC389}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DBD77C95-5464-4882-9E6C-CE2B41BA7397}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBD77C95-5464-4882-9E6C-CE2B41BA7397}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBD77C95-5464-4882-9E6C-CE2B41BA7397}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBD77C95-5464-4882-9E6C-CE2B41BA7397}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B502943-782A-4BDE-9B38-9AFC2C2EC389}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B502943-782A-4BDE-9B38-9AFC2C2EC389}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B502943-782A-4BDE-9B38-9AFC2C2EC389}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B502943-782A-4BDE-9B38-9AFC2C2EC389}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
