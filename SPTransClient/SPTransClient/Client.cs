@@ -1,4 +1,5 @@
 ﻿using RestSharp;
+using SPTransClient.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,26 +80,26 @@ namespace SPTransClient
             return response.Data;
         }
 
-        public virtual IEnumerable<Buses> SearchBus(string searchTerm)
+        public virtual IEnumerable<Bus> Bus(string terms)
         {
-            if (string.IsNullOrWhiteSpace(searchTerm))
+            if (string.IsNullOrWhiteSpace(terms))
             {
-                throw new ArgumentException(nameof(searchTerm));
+                throw new ArgumentException(nameof(terms));
             }
 
             var restClient = CreateClient(CurrentServiceEndPoint);
             var request = CreateRequest("/Linha/Buscar", Method.GET);
 
-            request.AddQueryParameter("termosBusca", searchTerm);
+            request.AddQueryParameter("termosBusca", terms);
 
-            var response = restClient.Execute<List<Buses>>(request);
+            var response = restClient.Execute<List<Bus>>(request);
 
             ThrownIfExceptionFound(response, DefaultValidStatus);
 
             return response.Data;
         }
 
-        public virtual IEnumerable<Buses> BusDetails(int? busLine)
+        public virtual IEnumerable<Bus> BusDetails(long? busLine)
         {
             if (busLine != null && busLine <= 0)
             {
@@ -113,7 +114,98 @@ namespace SPTransClient
                 request.AddQueryParameter("codigoLinha", busLine.ToString());
             }
 
-            var response = restClient.Execute<List<Buses>>(request);
+            var response = restClient.Execute<List<Bus>>(request);
+
+            ThrownIfExceptionFound(response, DefaultValidStatus);
+
+            return response.Data;
+        }
+
+        public virtual Position BusPosition(long? busLine)
+        {
+            if (busLine != null && busLine <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(busLine));
+            }
+
+            var restClient = CreateClient(CurrentServiceEndPoint);
+            var request = CreateRequest("/Posicao", Method.GET);
+
+            if (busLine != null)
+            {
+                request.AddQueryParameter("codigoLinha", busLine.ToString());
+            }
+
+            var response = restClient.Execute<Position>(request);
+
+            ThrownIfExceptionFound(response, DefaultValidStatus);
+
+            return response.Data;
+        }
+
+        public virtual IEnumerable<Stop> BusStop(string terms)
+        {
+            if (string.IsNullOrWhiteSpace(terms))
+            {
+                throw new ArgumentOutOfRangeException(nameof(terms));
+            }
+
+            var restClient = CreateClient(CurrentServiceEndPoint);
+            var request = CreateRequest("/Parada/Buscar", Method.GET);
+
+            request.AddQueryParameter("termosBusca", terms);
+
+            var response = restClient.Execute<List<Stop>>(request);
+
+            ThrownIfExceptionFound(response, DefaultValidStatus);
+
+            return response.Data;
+        }
+
+        public virtual IEnumerable<Stop> StopPerLine(long busLine)
+        {
+            if (busLine <= 0)
+            {
+                throw new ArgumentException(nameof(busLine));
+            }
+
+            var restClient = CreateClient(CurrentServiceEndPoint);
+            var request = CreateRequest("/Parada/BuscarParadasPorLinha", Method.GET);
+
+            request.AddQueryParameter("codigoLinha", busLine.ToString());
+
+            var response = restClient.Execute<List<Stop>>(request);
+
+            ThrownIfExceptionFound(response, DefaultValidStatus);
+
+            return response.Data;
+        }
+
+        public virtual IEnumerable<Stop> StopPerCorridor(long corridor)
+        {
+            if (corridor <= 0)
+            {
+                throw new ArgumentException(nameof(corridor));
+            }
+
+            var restClient = CreateClient(CurrentServiceEndPoint);
+            var request = CreateRequest("/Parada/BuscarParadasPorCorredor", Method.GET);
+
+            request.AddQueryParameter("codigoCorredor", corridor.ToString());
+
+            var response = restClient.Execute<List<Stop>>(request);
+
+            ThrownIfExceptionFound(response, DefaultValidStatus);
+
+            return response.Data;
+        }
+
+        public virtual IEnumerable<Corridor> Corridor()
+        {
+            var restClient = CreateClient(CurrentServiceEndPoint);
+            var request = CreateRequest("/Corredor", Method.GET);
+
+            var response = restClient.Execute<List<Corridor>>(request);
 
             ThrownIfExceptionFound(response, DefaultValidStatus);
 

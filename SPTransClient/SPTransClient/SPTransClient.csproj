@@ -48,8 +48,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Buses.cs" />
+    <Compile Include="Converters\TimeSpanConverter.cs" />
+    <Compile Include="Models\Bus.cs" />
     <Compile Include="Exceptions\SPTransException.cs" />
+    <Compile Include="Models\Geolocation.cs" />
+    <Compile Include="Models\Corridor.cs" />
+    <Compile Include="Models\Enums.cs" />
+    <Compile Include="Models\Position.cs" />
+    <Compile Include="Models\Stop.cs" />
     <Compile Include="Serializers\SPTransJsonSerializer.cs" />
     <Compile Include="ServiceEndPoint.cs" />
     <Compile Include="Credential.cs" />

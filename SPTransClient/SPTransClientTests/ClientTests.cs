@@ -32,7 +32,7 @@ namespace SPTransClient.Tests
 
             Assert.IsTrue(client.Authenticate());
 
-            var listBus = client.SearchBus("terminal campo limpo");
+            var listBus = client.Bus("terminal campo limpo");
 
             Assert.IsNotNull(listBus);
             Assert.IsTrue(listBus.Count() > 0);
