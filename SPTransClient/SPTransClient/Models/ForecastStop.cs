@@ -7,12 +7,9 @@ using System.Threading.Tasks;
 
 namespace SPTransClient.Models
 {
-    public class Corridor
+    public class ForecastStop : Forecast
     {
-        [JsonProperty("CodCorredor")]
-        public string CorridorCode { get; set; }
-
-        [JsonProperty("Nome")]
-        public string Name { get; set; }
+        [JsonProperty("l")]
+        public IEnumerable<Line> Lines { get; set; }
     }
 }

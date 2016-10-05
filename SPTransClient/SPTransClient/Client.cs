@@ -121,28 +121,6 @@ namespace SPTransClient
             return response.Data;
         }
 
-        public virtual Position BusPosition(long? busLine)
-        {
-            if (busLine != null && busLine <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(busLine));
-            }
-
-            var restClient = CreateClient(CurrentServiceEndPoint);
-            var request = CreateRequest("/Posicao", Method.GET);
-
-            if (busLine != null)
-            {
-                request.AddQueryParameter("codigoLinha", busLine.ToString());
-            }
-
-            var response = restClient.Execute<Position>(request);
-
-            ThrownIfExceptionFound(response, DefaultValidStatus);
-
-            return response.Data;
-        }
-
         public virtual IEnumerable<Stop> BusStop(string terms)
         {
             if (string.IsNullOrWhiteSpace(terms))
@@ -206,6 +184,91 @@ namespace SPTransClient
             var request = CreateRequest("/Corredor", Method.GET);
 
             var response = restClient.Execute<List<Corridor>>(request);
+
+            ThrownIfExceptionFound(response, DefaultValidStatus);
+
+            return response.Data;
+        }
+
+        public virtual Position BusPosition(long? busLine)
+        {
+            if (busLine != null && busLine <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(busLine));
+            }
+
+            var restClient = CreateClient(CurrentServiceEndPoint);
+            var request = CreateRequest("/Posicao", Method.GET);
+
+            if (busLine != null)
+            {
+                request.AddQueryParameter("codigoLinha", busLine.ToString());
+            }
+
+            var response = restClient.Execute<Position>(request);
+
+            ThrownIfExceptionFound(response, DefaultValidStatus);
+
+            return response.Data;
+        }
+
+        public virtual ForecastWithLine StopForecastPerStopAndLine(long stopCode, long lineCode)
+        {
+            if (stopCode <= 0)
+            {
+                throw new ArgumentException(nameof(stopCode));
+            }
+
+            if (lineCode <= 0)
+            {
+                throw new ArgumentException(nameof(lineCode));
+            }
+
+            var restClient = CreateClient(CurrentServiceEndPoint);
+            var request = CreateRequest("/Previsao", Method.GET);
+
+            request.AddQueryParameter("codigoParada", stopCode.ToString());
+            request.AddQueryParameter("codigoLinha", lineCode.ToString());
+
+            var response = restClient.Execute<ForecastWithLine>(request);
+
+            ThrownIfExceptionFound(response, DefaultValidStatus);
+
+            return response.Data;
+        }
+
+        public virtual ForecastWithGeolocation StopForecastPerLine(long lineCode)
+        {
+            if (lineCode <= 0)
+            {
+                throw new ArgumentException(nameof(lineCode));
+            }
+
+            var restClient = CreateClient(CurrentServiceEndPoint);
+            var request = CreateRequest("/Previsao/Linha", Method.GET);
+
+            request.AddQueryParameter("codigoLinha", lineCode.ToString());
+
+            var response = restClient.Execute<ForecastWithGeolocation>(request);
+
+            ThrownIfExceptionFound(response, DefaultValidStatus);
+
+            return response.Data;
+        }
+
+        public virtual ForecastWithLine StopForecastPerStop(long stopCode)
+        {
+            if (stopCode <= 0)
+            {
+                throw new ArgumentException(nameof(stopCode));
+            }
+
+            var restClient = CreateClient(CurrentServiceEndPoint);
+            var request = CreateRequest("/Previsao/Parada", Method.GET);
+
+            request.AddQueryParameter("codigoParada", stopCode.ToString());
+
+            var response = restClient.Execute<ForecastWithLine>(request);
 
             ThrownIfExceptionFound(response, DefaultValidStatus);
 

@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using SPTransClient.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +7,8 @@ using System.Threading.Tasks;
 
 namespace SPTransClient.Models
 {
-    public class Position
+    public class ForecastLine : Forecast
     {
-        [JsonProperty("hr")]
-        [JsonConverter(typeof(TimeSpanConverter))]
-        public TimeSpan? TimeLeft { get; set; }
-
         [JsonProperty("vs")]
         public IEnumerable<Geolocation> Geolocations { get; set; }
     }

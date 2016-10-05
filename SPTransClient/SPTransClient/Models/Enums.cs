@@ -8,8 +8,8 @@ namespace SPTransClient.Models.Enums
 {
     public enum DirectionTypes
     {
-        Secundary,
-        Primary
+        Secundary = 1,
+        Primary = 2
     }
 
     public enum BusType

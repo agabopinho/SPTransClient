@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using SPTransClient.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,17 +7,13 @@ using System.Threading.Tasks;
 
 namespace SPTransClient.Models
 {
-    public class Geolocation
+    public class Forecast
     {
-        [JsonProperty("p")]
+        [JsonProperty("cp")]
         public long? StopCode { get; set; }
 
-        [JsonProperty("t")]
-        [JsonConverter(typeof(TimeSpanConverter))]
-        public TimeSpan? TimeLeft { get; set; }
-
-        [JsonProperty("a")]
-        public bool? A { get; set; } // TODO: verificar o que é esse campo
+        [JsonProperty("np")]
+        public string StopName { get; set; }
 
         [JsonProperty("py")]
         public float? Longitude { get; set; }
