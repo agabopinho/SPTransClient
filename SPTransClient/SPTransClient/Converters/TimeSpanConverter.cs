@@ -33,19 +33,17 @@ namespace SPTransClient.Converters
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            if (objectType != typeof(TimeSpan))
+            if (objectType != typeof(TimeSpan) && Nullable.GetUnderlyingType(objectType) != typeof(TimeSpan))
             {
                 throw new JsonSerializationException("Property type not is TimeSpan");
             }
 
-            var time = reader.ReadAsString();
-
-            if (string.IsNullOrWhiteSpace(time))
-            {
-                return null;
+            if (reader.Value == null || reader.Value.ToString().Trim() == string.Empty)
+            {   return null;
+             
             }
 
-            var parts = time.Split(':');
+            var parts = reader.Value.ToString().Split(':');
 
             return new TimeSpan(int.Parse(parts[0]), int.Parse(parts[1]), 0);
         }

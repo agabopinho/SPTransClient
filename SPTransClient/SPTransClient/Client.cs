@@ -1,4 +1,5 @@
-﻿using RestSharp;
+﻿using Newtonsoft.Json;
+using RestSharp;
 using SPTransClient.Models;
 using System;
 using System.Collections.Generic;
@@ -73,11 +74,11 @@ namespace SPTransClient
 
             request.AddUrlSegment("token", Credential.Token);
 
-            var response = restClient.Execute<bool>(request);
+            var response = restClient.Execute(request);
 
             ThrownIfExceptionFound(response, DefaultValidStatus);
 
-            return response.Data;
+            return JsonConvert.DeserializeObject<bool>(response.Content);
         }
 
         public virtual IEnumerable<Bus> Bus(string terms)
@@ -92,11 +93,11 @@ namespace SPTransClient
 
             request.AddQueryParameter("termosBusca", terms);
 
-            var response = restClient.Execute<List<Bus>>(request);
+            var response = restClient.Execute(request);
 
             ThrownIfExceptionFound(response, DefaultValidStatus);
 
-            return response.Data;
+            return JsonConvert.DeserializeObject<Bus[]>(response.Content);
         }
 
         public virtual IEnumerable<Bus> BusDetails(long? busLine)
@@ -114,14 +115,14 @@ namespace SPTransClient
                 request.AddQueryParameter("codigoLinha", busLine.ToString());
             }
 
-            var response = restClient.Execute<List<Bus>>(request);
+            var response = restClient.Execute(request);
 
             ThrownIfExceptionFound(response, DefaultValidStatus);
 
-            return response.Data;
+            return JsonConvert.DeserializeObject<Bus[]>(response.Content);
         }
 
-        public virtual IEnumerable<Stop> BusStop(string terms)
+        public virtual IEnumerable<Stop> Stop(string terms)
         {
             if (string.IsNullOrWhiteSpace(terms))
             {
@@ -133,11 +134,11 @@ namespace SPTransClient
 
             request.AddQueryParameter("termosBusca", terms);
 
-            var response = restClient.Execute<List<Stop>>(request);
+            var response = restClient.Execute(request);
 
             ThrownIfExceptionFound(response, DefaultValidStatus);
 
-            return response.Data;
+            return JsonConvert.DeserializeObject<Stop[]>(response.Content);
         }
 
         public virtual IEnumerable<Stop> StopPerLine(long busLine)
@@ -152,11 +153,11 @@ namespace SPTransClient
 
             request.AddQueryParameter("codigoLinha", busLine.ToString());
 
-            var response = restClient.Execute<List<Stop>>(request);
+            var response = restClient.Execute(request);
 
             ThrownIfExceptionFound(response, DefaultValidStatus);
 
-            return response.Data;
+            return JsonConvert.DeserializeObject<Stop[]>(response.Content);
         }
 
         public virtual IEnumerable<Stop> StopPerCorridor(long corridor)
@@ -171,11 +172,11 @@ namespace SPTransClient
 
             request.AddQueryParameter("codigoCorredor", corridor.ToString());
 
-            var response = restClient.Execute<List<Stop>>(request);
+            var response = restClient.Execute(request);
 
             ThrownIfExceptionFound(response, DefaultValidStatus);
 
-            return response.Data;
+            return JsonConvert.DeserializeObject<Stop[]>(response.Content);
         }
 
         public virtual IEnumerable<Corridor> Corridor()
@@ -183,11 +184,11 @@ namespace SPTransClient
             var restClient = CreateClient(CurrentServiceEndPoint);
             var request = CreateRequest("/Corredor", Method.GET);
 
-            var response = restClient.Execute<List<Corridor>>(request);
+            var response = restClient.Execute(request);
 
             ThrownIfExceptionFound(response, DefaultValidStatus);
 
-            return response.Data;
+            return JsonConvert.DeserializeObject<Corridor[]>(response.Content);
         }
 
         public virtual Position BusPosition(long? busLine)
@@ -205,11 +206,11 @@ namespace SPTransClient
                 request.AddQueryParameter("codigoLinha", busLine.ToString());
             }
 
-            var response = restClient.Execute<Position>(request);
+            var response = restClient.Execute(request);
 
             ThrownIfExceptionFound(response, DefaultValidStatus);
 
-            return response.Data;
+            return JsonConvert.DeserializeObject<Position>(response.Content);
         }
 
         public virtual ForecastWithLine StopForecastPerStopAndLine(long stopCode, long lineCode)
@@ -234,7 +235,7 @@ namespace SPTransClient
 
             ThrownIfExceptionFound(response, DefaultValidStatus);
 
-            return response.Data;
+            return JsonConvert.DeserializeObject<ForecastWithLine>(response.Content);
         }
 
         public virtual ForecastWithGeolocation StopForecastPerLine(long lineCode)
@@ -249,11 +250,11 @@ namespace SPTransClient
 
             request.AddQueryParameter("codigoLinha", lineCode.ToString());
 
-            var response = restClient.Execute<ForecastWithGeolocation>(request);
+            var response = restClient.Execute(request);
 
             ThrownIfExceptionFound(response, DefaultValidStatus);
 
-            return response.Data;
+            return JsonConvert.DeserializeObject<ForecastWithGeolocation>(response.Content);
         }
 
         public virtual ForecastWithLine StopForecastPerStop(long stopCode)
@@ -268,11 +269,11 @@ namespace SPTransClient
 
             request.AddQueryParameter("codigoParada", stopCode.ToString());
 
-            var response = restClient.Execute<ForecastWithLine>(request);
+            var response = restClient.Execute(request);
 
             ThrownIfExceptionFound(response, DefaultValidStatus);
 
-            return response.Data;
+            return JsonConvert.DeserializeObject<ForecastWithLine>(response.Content);
         }
     }
 }

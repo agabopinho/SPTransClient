@@ -11,14 +11,14 @@ namespace SPTransClient.Models
     public class Geolocation
     {
         [JsonProperty("p")]
-        public long? StopCode { get; set; }
+        public long? PositionCode { get; set; }
 
         [JsonProperty("t")]
         [JsonConverter(typeof(TimeSpanConverter))]
-        public TimeSpan? TimeLeft { get; set; }
+        public TimeSpan? ScheduledTime { get; set; }
 
         [JsonProperty("a")]
-        public bool? A { get; set; } // TODO: verificar o que é esse campo
+        public bool? IsLate { get; set; }
 
         [JsonProperty("py")]
         public float? Longitude { get; set; }

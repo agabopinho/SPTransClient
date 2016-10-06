@@ -12,9 +12,9 @@ namespace SPTransClient.Models
     {
         [JsonProperty("hr")]
         [JsonConverter(typeof(TimeSpanConverter))]
-        public TimeSpan TimeLeft { get; set; }
+        public TimeSpan Hour { get; set; }
 
         [JsonProperty("ps")]
-        public ForecastLine Stop { get; set; }
+        public IEnumerable<ForecastLine> Stop { get; set; }
     }
 }

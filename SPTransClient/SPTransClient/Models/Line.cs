@@ -26,7 +26,7 @@ namespace SPTransClient.Models
         public string NameDirectionToPrimary { get; set; }
 
         [JsonProperty("qv")]
-        public int? Qv  { get; set; } // TODO: verificar o que é esse campo
+        public int? QuantityGeolocations  { get; set; }
 
         [JsonProperty("vs")]
         public IEnumerable<Geolocation> Geolocations { get; set; }

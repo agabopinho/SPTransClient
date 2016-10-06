@@ -13,7 +13,7 @@ namespace SPTransClient.Models
     {
         [JsonProperty("hr")]
         [JsonConverter(typeof(TimeSpanConverter))]
-        public TimeSpan? TimeLeft { get; set; }
+        public TimeSpan? Hour { get; set; }
 
         [JsonProperty("vs")]
         public IEnumerable<Geolocation> Geolocations { get; set; }

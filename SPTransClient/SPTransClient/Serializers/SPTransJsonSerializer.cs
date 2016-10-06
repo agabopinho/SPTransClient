@@ -11,20 +11,8 @@ namespace SPTransClient
 {
     public class SPTransJsonSerializer : ISerializer
     {
-        protected Newtonsoft.Json.JsonSerializer Serializer { get; set; }
-
         public SPTransJsonSerializer()
         {
-            ContentType = "application/json";
-
-            Serializer = Newtonsoft.Json.JsonSerializer.Create();
-            Serializer.NullValueHandling = NullValueHandling.Ignore;
-        }
-
-        public SPTransJsonSerializer(Newtonsoft.Json.JsonSerializer serializer)
-        {
-            ContentType = "application/json";
-            Serializer = serializer;
         }
 
         public virtual string DateFormat { get; set; }
@@ -34,17 +22,7 @@ namespace SPTransClient
 
         public virtual string Serialize(object obj)
         {
-            using (var stringWriter = new StringWriter())
-            using (var jsonTextWriter = new JsonTextWriter(stringWriter))
-            {
-#if DEBUG
-                jsonTextWriter.Formatting = Formatting.Indented;
-#endif
-
-                Serializer.Serialize(jsonTextWriter, obj);
-
-                return stringWriter.ToString();
-            }
+            return JsonConvert.SerializeObject(obj);
         }
     }
 }
