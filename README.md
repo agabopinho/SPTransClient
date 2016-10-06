@@ -1,5 +1,10 @@
 ### Simples SPTrans API Cliente
 
+#### Nuget
+
+* [.NET 4.5 e .NET Standard 1.6] (https://www.nuget.org/packages/SPTransClient/)
+
+#### Exemplo de uso
 ```
 Credential credential;
 
