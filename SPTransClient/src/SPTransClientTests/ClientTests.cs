@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SPTransClient.Tests
 {
-    [TestClass()]
+    [TestClass]
     public class ClientTests
     {
         Credential credential;
