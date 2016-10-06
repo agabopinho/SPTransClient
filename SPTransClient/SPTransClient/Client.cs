@@ -69,7 +69,7 @@ namespace SPTransClient
             return JsonConvert.DeserializeObject<T>(response.Content);
         }
 
-        protected virtual void ThrownIfExceptionFound(IRestResponse response, HttpStatusCode[] validStatus)
+        public virtual void ThrownIfExceptionFound(IRestResponse response, HttpStatusCode[] validStatus)
         {
             if (response.ErrorException != null || !validStatus.Contains(response.StatusCode))
             {
