@@ -1,24 +1,18 @@
 ﻿using Newtonsoft.Json;
-using RestSharp;
 using SPTransClient.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace SPTransClient
 {
     public class Client
     {
-        protected static readonly HttpStatusCode[] DefaultValidStatus = new[]
-        {
-            HttpStatusCode.OK,
-            HttpStatusCode.Created,
-            HttpStatusCode.Accepted
-        };
-
         public Client(ServiceEndPoint endPoint, Credential credential)
         {
             if (endPoint == null)
@@ -39,151 +33,128 @@ namespace SPTransClient
 
         public Credential Credential { get; }
 
-        public CookieContainer Container { get; } = new CookieContainer();
+        public CookieContainer Cookies { get; } = new CookieContainer();
 
-        public virtual RestClient CreateClient(string url)
+        public virtual HttpClient CreateClient(string url)
         {
-            var restClient = new RestClient(url);
-
-            restClient.CookieContainer = Container;
-
-            return restClient;
-        }
-
-        public virtual RestRequest CreateRequest(string resource, Method method)
-        {
-            var request = new RestRequest(resource, method);
-
-            request.JsonSerializer = new SPTransJsonSerializer();
-
-            return request;
-        }
-
-        public virtual T Execute<T>(RestRequest request)
-        {
-            var restClient = CreateClient(CurrentServiceEndPoint.Url);
-            var response = restClient.Execute(request);
-
-            ThrownIfExceptionFound(response, DefaultValidStatus);
-
-            return JsonConvert.DeserializeObject<T>(response.Content);
-        }
-
-        public virtual void ThrownIfExceptionFound(IRestResponse response, HttpStatusCode[] validStatus)
-        {
-            if (response.ErrorException != null || !validStatus.Contains(response.StatusCode))
+            var handle = new HttpClientHandler
             {
-                throw new SPTransException(response);
+                CookieContainer = Cookies
+            };
+
+            var client = new HttpClient(handle, true);
+            client.BaseAddress = new Uri(CurrentServiceEndPoint.Url);
+
+            return client;
+        }
+
+        public async virtual Task<T> Execute<T>(HttpRequestMessage request)
+        {
+            using (var client = CreateClient(CurrentServiceEndPoint.Url))
+            using (var response = await client.SendAsync(request))
+            {
+                try
+                {
+                    response.EnsureSuccessStatusCode();
+                }
+                catch (Exception inner)
+                {
+                    throw new SPTransException(response, inner);
+                }
+
+                var stringComtent = await response.Content.ReadAsStringAsync();
+
+                return JsonConvert.DeserializeObject<T>(stringComtent);
             }
         }
 
-        public virtual bool Authenticate()
+        public async virtual Task<bool> Authenticate()
         {
-            var request = CreateRequest("/Login/Autenticar?token={token}", Method.POST);
+            var request = new HttpRequestMessage(HttpMethod.Post, $"Login/Autenticar?token={Credential.Token}");
 
-            request.AddUrlSegment("token", Credential.Token);
-
-            return Execute<bool>(request);
+            return await Execute<bool>(request);
         }
 
-        public virtual IEnumerable<Bus> Bus(string terms)
+        public async virtual Task<IEnumerable<Bus>> Bus(string terms)
         {
             if (string.IsNullOrWhiteSpace(terms))
             {
                 throw new ArgumentException(nameof(terms));
             }
 
-            var request = CreateRequest("/Linha/Buscar", Method.GET);
+            var request = new HttpRequestMessage(HttpMethod.Get, $"Linha/Buscar?termosBusca={terms}");
 
-            request.AddQueryParameter("termosBusca", terms);
-
-            return Execute<IEnumerable<Bus>>(request);
+            return await Execute<IEnumerable<Bus>>(request);
         }
 
-        public virtual IEnumerable<Bus> BusDetails(long? busLine)
+        public async virtual Task<IEnumerable<Bus>> BusDetails(long busLine)
         {
-            if (busLine != null && busLine <= 0)
+            if (busLine <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(busLine));
             }
 
-            var request = CreateRequest("/Linha/CarregarDetalhes", Method.GET);
+            var request = new HttpRequestMessage(HttpMethod.Get, $"Linha/CarregarDetalhes?codigoLinha={busLine}");
 
-            if (busLine != null)
-            {
-                request.AddQueryParameter("codigoLinha", busLine.ToString());
-            }
-
-            return Execute<IEnumerable<Bus>>(request);
+            return await Execute<IEnumerable<Bus>>(request);
         }
 
-        public virtual IEnumerable<Stop> Stop(string terms)
+        public async virtual Task<IEnumerable<Stop>> Stop(string terms)
         {
             if (string.IsNullOrWhiteSpace(terms))
             {
                 throw new ArgumentOutOfRangeException(nameof(terms));
             }
 
-            var request = CreateRequest("/Parada/Buscar", Method.GET);
+            var request = new HttpRequestMessage(HttpMethod.Get, $"Parada/Buscar?termosBusca={terms}");
 
-            request.AddQueryParameter("termosBusca", terms);
-
-            return Execute<IEnumerable<Stop>>(request);
+            return await Execute<IEnumerable<Stop>>(request);
         }
 
-        public virtual IEnumerable<Stop> StopPerLine(long busLine)
+        public async virtual Task<IEnumerable<Stop>> StopPerLine(long busLine)
         {
             if (busLine <= 0)
             {
                 throw new ArgumentException(nameof(busLine));
             }
 
-            var request = CreateRequest("/Parada/BuscarParadasPorLinha", Method.GET);
+            var request = new HttpRequestMessage(HttpMethod.Get, $"Parada/BuscarParadasPorLinha?codigoLinha={busLine}");
 
-            request.AddQueryParameter("codigoLinha", busLine.ToString());
-
-            return Execute<IEnumerable<Stop>>(request);
+            return await Execute<IEnumerable<Stop>>(request);
         }
 
-        public virtual IEnumerable<Stop> StopPerCorridor(long corridor)
+        public async virtual Task<IEnumerable<Stop>> StopPerCorridor(long corridor)
         {
             if (corridor <= 0)
             {
                 throw new ArgumentException(nameof(corridor));
             }
 
-            var request = CreateRequest("/Parada/BuscarParadasPorCorredor", Method.GET);
+            var request = new HttpRequestMessage(HttpMethod.Get, $"Parada/BuscarParadasPorCorredor?codigoCorredor={corridor}");
 
-            request.AddQueryParameter("codigoCorredor", corridor.ToString());
-
-            return Execute<IEnumerable<Stop>>(request);
+            return await Execute<IEnumerable<Stop>>(request);
         }
 
-        public virtual IEnumerable<Corridor> Corridor()
+        public async virtual Task<IEnumerable<Corridor>> Corridor()
         {
-            var request = CreateRequest("/Corredor", Method.GET);
+            var request = new HttpRequestMessage(HttpMethod.Get, "Corredor");
 
-            return Execute<IEnumerable<Corridor>>(request);
+            return await Execute<IEnumerable<Corridor>>(request);
         }
 
-        public virtual Position BusPosition(long? busLine)
+        public async virtual Task<Position> BusPosition(long busLine)
         {
-            if (busLine != null && busLine <= 0)
+            if (busLine <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(busLine));
             }
 
-            var request = CreateRequest("/Posicao", Method.GET);
+            var request = new HttpRequestMessage(HttpMethod.Get, $"Posicao?codigoLinha={busLine}");
 
-            if (busLine != null)
-            {
-                request.AddQueryParameter("codigoLinha", busLine.ToString());
-            }
-
-            return Execute<Position>(request);
+            return await Execute<Position>(request);
         }
 
-        public virtual ForecastWithLine StopForecastPerStopAndLine(long stopCode, long lineCode)
+        public async virtual Task<ForecastWithLine> StopForecastPerStopAndLine(long stopCode, long lineCode)
         {
             if (stopCode <= 0)
             {
@@ -195,40 +166,33 @@ namespace SPTransClient
                 throw new ArgumentException(nameof(lineCode));
             }
 
-            var request = CreateRequest("/Previsao", Method.GET);
+            var request = new HttpRequestMessage(HttpMethod.Get, $"Previsao?codigoParada={stopCode}&codigoLinha={lineCode}");
 
-            request.AddQueryParameter("codigoParada", stopCode.ToString());
-            request.AddQueryParameter("codigoLinha", lineCode.ToString());
-
-            return Execute<ForecastWithLine>(request);
+            return await Execute<ForecastWithLine>(request);
         }
 
-        public virtual ForecastWithGeolocation StopForecastPerLine(long lineCode)
+        public async virtual Task<ForecastWithGeolocation> StopForecastPerLine(long lineCode)
         {
             if (lineCode <= 0)
             {
                 throw new ArgumentException(nameof(lineCode));
             }
 
-            var request = CreateRequest("/Previsao/Linha", Method.GET);
+            var request = new HttpRequestMessage(HttpMethod.Get, $"Previsao/Linha?codigoLinha={lineCode}");
 
-            request.AddQueryParameter("codigoLinha", lineCode.ToString());
-
-            return Execute<ForecastWithGeolocation>(request);
+            return await Execute<ForecastWithGeolocation>(request);
         }
 
-        public virtual ForecastWithLine StopForecastPerStop(long stopCode)
+        public async virtual Task<ForecastWithLine> StopForecastPerStop(long stopCode)
         {
             if (stopCode <= 0)
             {
                 throw new ArgumentException(nameof(stopCode));
             }
 
-            var request = CreateRequest("/Previsao/Parada", Method.GET);
+            var request = new HttpRequestMessage(HttpMethod.Get, $"Previsao/Parada?codigoParada={stopCode}");
 
-            request.AddQueryParameter("codigoParada", stopCode.ToString());
-
-            return Execute<ForecastWithLine>(request);
+            return await Execute<ForecastWithLine>(request);
         }
     }
 }
