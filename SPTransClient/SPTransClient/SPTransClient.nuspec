@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>SPTransClient</id>
+    <version>$version$</version>
+    <title>SPTransClient</title>
+    <authors>Ágabo D. de Pinho (https://github.com/agaboduarte)</authors>
+    <licenseUrl>https://raw.github.com/agaboduarte/SPTransClient/master/LICENSE.md</licenseUrl>
+    <projectUrl>https://github.com/agaboduarte/SPTransClient</projectUrl>
+    <iconUrl>http://www.sptrans.com.br/img/marcas/spTransLargeHome.gif</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+      Cliente para o serviço de localização de ônibus da SPTrans.
+      Github: https://github.com/agaboduarte/SPTransClient
+    </description>
+    <releaseNotes>
+      Github: https://github.com/agaboduarte/SPTransClient
+    </releaseNotes>
+    <summary>
+      Cliente para o serviço de localização de ônibus da SPTrans.
+      Github: https://github.com/agaboduarte/SPTransClient
+    </summary>
+    <copyright>Copyright 2016</copyright>
+    <tags>sptrans localizacao onibus</tags>
+    <language>en-US</language>
+  </metadata>
+</package>
