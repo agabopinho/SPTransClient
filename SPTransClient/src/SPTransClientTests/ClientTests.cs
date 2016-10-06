@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SPTransClient.Tests
 {
-    [TestClass()]
+    [TestClass]
     public class ClientTests
     {
         Credential credential;
@@ -26,24 +26,24 @@ namespace SPTransClient.Tests
         }
 
         [TestMethod()]
-        public void BusTest()
+        public async Task BusTest()
         {
             var client = new Client(ServiceEndPoint.Production, credential);
+ 
+            Assert.IsTrue(await client.Authenticate());
 
-            Assert.IsTrue(client.Authenticate());
-
-            var bus = client.Bus("terminal campo limpo");
+            var bus = await client.Bus("terminal campo limpo");
 
             Assert.IsNotNull(bus);
             Assert.IsTrue(bus.Count() > 0);
         }
 
         [TestMethod()]
-        public void BusesDetailsTest()
+        public async Task BusesDetailsTest()
         {
             var client = new Client(ServiceEndPoint.Production, credential);
             
-            Assert.IsTrue(client.Authenticate());
+            Assert.IsTrue(await client.Authenticate());
 
             var bus = client.BusDetails(1877);
 
@@ -51,101 +51,101 @@ namespace SPTransClient.Tests
         }
 
         [TestMethod()]
-        public void BusPositionTest()
+        public async Task BusPositionTest()
         {
             var client = new Client(ServiceEndPoint.Production, credential);
 
-            Assert.IsTrue(client.Authenticate());
+            Assert.IsTrue(await client.Authenticate());
 
-            var position = client.BusPosition(1912);
+            var position = await client.BusPosition(1912);
 
             Assert.IsNotNull(position);
             Assert.IsNotNull(position.Geolocations);
         }
 
         [TestMethod()]
-        public void StopTest()
+        public async Task StopTest()
         {
             var client = new Client(ServiceEndPoint.Production, credential);
 
-            Assert.IsTrue(client.Authenticate());
+            Assert.IsTrue(await client.Authenticate());
 
-            var stops = client.Stop("Av Paulista");
+            var stops = await client.Stop("Av Paulista");
 
             Assert.IsNotNull(stops);
         }
 
         [TestMethod()]
-        public void CorridorTest()
+        public async Task CorridorTest()
         {
             var client = new Client(ServiceEndPoint.Production, credential);
 
-            Assert.IsTrue(client.Authenticate());
+            Assert.IsTrue(await client.Authenticate());
 
-            var corridors = client.Corridor();
+            var corridors = await client.Corridor();
 
             Assert.IsNotNull(corridors);
         }
 
         [TestMethod()]
-        public void StopForecastPerLineTest()
+        public async Task StopForecastPerLineTest()
         {
             var client = new Client(ServiceEndPoint.Production, credential);
 
-            Assert.IsTrue(client.Authenticate());
+            Assert.IsTrue(await client.Authenticate());
 
-            var line = client.StopForecastPerLine(1877);
+            var line = await client.StopForecastPerLine(1877);
 
             Assert.IsNotNull(line);
             Assert.IsNotNull(line.Stop);
         }
 
         [TestMethod()]
-        public void StopForecastPerStopTest()
+        public async Task StopForecastPerStopTest()
         {
             var client = new Client(ServiceEndPoint.Production, credential);
 
-            Assert.IsTrue(client.Authenticate());
+            Assert.IsTrue(await client.Authenticate());
 
-            var stop = client.StopForecastPerStop(340015740);
+            var stop = await client.StopForecastPerStop(340015740);
 
             Assert.IsNotNull(stop);
             Assert.IsNotNull(stop.Stop);
         }
 
         [TestMethod()]
-        public void StopForecastPerStopAndLineTest()
+        public async Task StopForecastPerStopAndLineTest()
         {
             var client = new Client(ServiceEndPoint.Production, credential);
 
-            Assert.IsTrue(client.Authenticate());
+            Assert.IsTrue(await client.Authenticate());
 
-            var stop = client.StopForecastPerStopAndLine(340015740, 32815);
+            var stop = await client.StopForecastPerStopAndLine(340015740, 32815);
 
             Assert.IsNotNull(stop);
             Assert.IsNotNull(stop.Stop);
         }
 
         [TestMethod()]
-        public void StopPerCorridorTest()
+        public async Task StopPerCorridorTest()
         {
             var client = new Client(ServiceEndPoint.Production, credential);
 
-            Assert.IsTrue(client.Authenticate());
+            Assert.IsTrue(await client.Authenticate());
 
-            var stops = client.StopPerCorridor(3);
+            var stops = await client.StopPerCorridor(3);
 
             Assert.IsNotNull(stops);
         }
 
         [TestMethod()]
-        public void StopPerLineTest()
+        public async Task StopPerLineTest()
         {
             var client = new Client(ServiceEndPoint.Production, credential);
 
-            Assert.IsTrue(client.Authenticate());
+            Assert.IsTrue(await client.Authenticate());
 
-            var stops = client.StopPerLine(32815);
+            var stops = await client.StopPerLine(32815);
 
             Assert.IsNotNull(stops);
         }
