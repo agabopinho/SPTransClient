@@ -1,7 +1,22 @@
 {
-  "title": "SPTransClient",
-  "description": "SPTransClient",
-  "version": "1.0.0-*",
+  "title": "SPTrans API Client",
+  "description": "Cliente para o serviço de localização de ônibus da SPTrans.",
+  "version": "1.0.1-*",
+  "copyright": "Copyright 2016",
+  "authors": [ "Ágabo D. de Pinho (https://github.com/agaboduarte)" ],
+  "packOptions": {
+    "iconUrl": "http://www.sptrans.com.br/img/marcas/spTransLargeHome.gif",
+    "licenseUrl": "https://raw.github.com/agaboduarte/SPTransClient/master/LICENSE.md",
+    "projectUrl": "https://github.com/agaboduarte/SPTransClient",
+    "requireLicenseAcceptance": false,
+    "summary": "Cliente para o serviço de localização de ônibus da SPTrans.",
+    "tags": [ "sptrans", "localizacao", "onibus" ],
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/agaboduarte/SPTransClient.git"
+    },
+    "owners": [ "agaboduarte" ]
+  },
 
   "dependencies": {
     "NETStandard.Library": "1.6.0",
@@ -18,5 +33,11 @@
     },
     "net4.5": {
     }
+  },
+
+  "scripts": {
+    "postcompile": [
+      "dotnet pack --no-build --configuration %compile:Configuration% "
+    ]
   }
 }
