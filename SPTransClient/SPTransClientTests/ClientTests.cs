@@ -42,7 +42,7 @@ namespace SPTransClient.Tests
         public void BusesDetailsTest()
         {
             var client = new Client(ServiceEndPoint.Production, credential);
-
+            
             Assert.IsTrue(client.Authenticate());
 
             var bus = client.BusDetails(1877);

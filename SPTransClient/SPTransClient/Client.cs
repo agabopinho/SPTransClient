@@ -41,16 +41,16 @@ namespace SPTransClient
 
         public CookieContainer Container { get; } = new CookieContainer();
 
-        protected virtual RestClient CreateClient(ServiceEndPoint Endpoint)
+        public virtual RestClient CreateClient(string url)
         {
-            var restClient = new RestClient(Endpoint.Url);
+            var restClient = new RestClient(url);
 
             restClient.CookieContainer = Container;
 
             return restClient;
         }
 
-        protected virtual RestRequest CreateRequest(string resource, Method method)
+        public virtual RestRequest CreateRequest(string resource, Method method)
         {
             var request = new RestRequest(resource, method);
 
@@ -59,9 +59,19 @@ namespace SPTransClient
             return request;
         }
 
-        protected virtual void ThrownIfExceptionFound(IRestResponse response, HttpStatusCode[] validStatus)
+        public virtual T Execute<T>(RestRequest request)
         {
-            if (!validStatus.Contains(response.StatusCode) || response.ResponseStatus != ResponseStatus.Completed)
+            var restClient = CreateClient(CurrentServiceEndPoint.Url);
+            var response = restClient.Execute(request);
+
+            ThrownIfExceptionFound(response, DefaultValidStatus);
+
+            return JsonConvert.DeserializeObject<T>(response.Content);
+        }
+
+        public virtual void ThrownIfExceptionFound(IRestResponse response, HttpStatusCode[] validStatus)
+        {
+            if (response.ErrorException != null || !validStatus.Contains(response.StatusCode))
             {
                 throw new SPTransException(response);
             }
@@ -69,16 +79,11 @@ namespace SPTransClient
 
         public virtual bool Authenticate()
         {
-            var restClient = CreateClient(CurrentServiceEndPoint);
             var request = CreateRequest("/Login/Autenticar?token={token}", Method.POST);
 
             request.AddUrlSegment("token", Credential.Token);
 
-            var response = restClient.Execute(request);
-
-            ThrownIfExceptionFound(response, DefaultValidStatus);
-
-            return JsonConvert.DeserializeObject<bool>(response.Content);
+            return Execute<bool>(request);
         }
 
         public virtual IEnumerable<Bus> Bus(string terms)
@@ -88,16 +93,11 @@ namespace SPTransClient
                 throw new ArgumentException(nameof(terms));
             }
 
-            var restClient = CreateClient(CurrentServiceEndPoint);
             var request = CreateRequest("/Linha/Buscar", Method.GET);
 
             request.AddQueryParameter("termosBusca", terms);
 
-            var response = restClient.Execute(request);
-
-            ThrownIfExceptionFound(response, DefaultValidStatus);
-
-            return JsonConvert.DeserializeObject<Bus[]>(response.Content);
+            return Execute<IEnumerable<Bus>>(request);
         }
 
         public virtual IEnumerable<Bus> BusDetails(long? busLine)
@@ -107,7 +107,6 @@ namespace SPTransClient
                 throw new ArgumentOutOfRangeException(nameof(busLine));
             }
 
-            var restClient = CreateClient(CurrentServiceEndPoint);
             var request = CreateRequest("/Linha/CarregarDetalhes", Method.GET);
 
             if (busLine != null)
@@ -115,11 +114,7 @@ namespace SPTransClient
                 request.AddQueryParameter("codigoLinha", busLine.ToString());
             }
 
-            var response = restClient.Execute(request);
-
-            ThrownIfExceptionFound(response, DefaultValidStatus);
-
-            return JsonConvert.DeserializeObject<Bus[]>(response.Content);
+            return Execute<IEnumerable<Bus>>(request);
         }
 
         public virtual IEnumerable<Stop> Stop(string terms)
@@ -129,16 +124,11 @@ namespace SPTransClient
                 throw new ArgumentOutOfRangeException(nameof(terms));
             }
 
-            var restClient = CreateClient(CurrentServiceEndPoint);
             var request = CreateRequest("/Parada/Buscar", Method.GET);
 
             request.AddQueryParameter("termosBusca", terms);
 
-            var response = restClient.Execute(request);
-
-            ThrownIfExceptionFound(response, DefaultValidStatus);
-
-            return JsonConvert.DeserializeObject<Stop[]>(response.Content);
+            return Execute<IEnumerable<Stop>>(request);
         }
 
         public virtual IEnumerable<Stop> StopPerLine(long busLine)
@@ -148,16 +138,11 @@ namespace SPTransClient
                 throw new ArgumentException(nameof(busLine));
             }
 
-            var restClient = CreateClient(CurrentServiceEndPoint);
             var request = CreateRequest("/Parada/BuscarParadasPorLinha", Method.GET);
 
             request.AddQueryParameter("codigoLinha", busLine.ToString());
 
-            var response = restClient.Execute(request);
-
-            ThrownIfExceptionFound(response, DefaultValidStatus);
-
-            return JsonConvert.DeserializeObject<Stop[]>(response.Content);
+            return Execute<IEnumerable<Stop>>(request);
         }
 
         public virtual IEnumerable<Stop> StopPerCorridor(long corridor)
@@ -167,28 +152,18 @@ namespace SPTransClient
                 throw new ArgumentException(nameof(corridor));
             }
 
-            var restClient = CreateClient(CurrentServiceEndPoint);
             var request = CreateRequest("/Parada/BuscarParadasPorCorredor", Method.GET);
 
             request.AddQueryParameter("codigoCorredor", corridor.ToString());
 
-            var response = restClient.Execute(request);
-
-            ThrownIfExceptionFound(response, DefaultValidStatus);
-
-            return JsonConvert.DeserializeObject<Stop[]>(response.Content);
+            return Execute<IEnumerable<Stop>>(request);
         }
 
         public virtual IEnumerable<Corridor> Corridor()
         {
-            var restClient = CreateClient(CurrentServiceEndPoint);
             var request = CreateRequest("/Corredor", Method.GET);
 
-            var response = restClient.Execute(request);
-
-            ThrownIfExceptionFound(response, DefaultValidStatus);
-
-            return JsonConvert.DeserializeObject<Corridor[]>(response.Content);
+            return Execute<IEnumerable<Corridor>>(request);
         }
 
         public virtual Position BusPosition(long? busLine)
@@ -198,7 +173,6 @@ namespace SPTransClient
                 throw new ArgumentOutOfRangeException(nameof(busLine));
             }
 
-            var restClient = CreateClient(CurrentServiceEndPoint);
             var request = CreateRequest("/Posicao", Method.GET);
 
             if (busLine != null)
@@ -206,11 +180,7 @@ namespace SPTransClient
                 request.AddQueryParameter("codigoLinha", busLine.ToString());
             }
 
-            var response = restClient.Execute(request);
-
-            ThrownIfExceptionFound(response, DefaultValidStatus);
-
-            return JsonConvert.DeserializeObject<Position>(response.Content);
+            return Execute<Position>(request);
         }
 
         public virtual ForecastWithLine StopForecastPerStopAndLine(long stopCode, long lineCode)
@@ -225,17 +195,12 @@ namespace SPTransClient
                 throw new ArgumentException(nameof(lineCode));
             }
 
-            var restClient = CreateClient(CurrentServiceEndPoint);
             var request = CreateRequest("/Previsao", Method.GET);
 
             request.AddQueryParameter("codigoParada", stopCode.ToString());
             request.AddQueryParameter("codigoLinha", lineCode.ToString());
 
-            var response = restClient.Execute<ForecastWithLine>(request);
-
-            ThrownIfExceptionFound(response, DefaultValidStatus);
-
-            return JsonConvert.DeserializeObject<ForecastWithLine>(response.Content);
+            return Execute<ForecastWithLine>(request);
         }
 
         public virtual ForecastWithGeolocation StopForecastPerLine(long lineCode)
@@ -245,16 +210,11 @@ namespace SPTransClient
                 throw new ArgumentException(nameof(lineCode));
             }
 
-            var restClient = CreateClient(CurrentServiceEndPoint);
             var request = CreateRequest("/Previsao/Linha", Method.GET);
 
             request.AddQueryParameter("codigoLinha", lineCode.ToString());
 
-            var response = restClient.Execute(request);
-
-            ThrownIfExceptionFound(response, DefaultValidStatus);
-
-            return JsonConvert.DeserializeObject<ForecastWithGeolocation>(response.Content);
+            return Execute<ForecastWithGeolocation>(request);
         }
 
         public virtual ForecastWithLine StopForecastPerStop(long stopCode)
@@ -264,16 +224,11 @@ namespace SPTransClient
                 throw new ArgumentException(nameof(stopCode));
             }
 
-            var restClient = CreateClient(CurrentServiceEndPoint);
             var request = CreateRequest("/Previsao/Parada", Method.GET);
 
             request.AddQueryParameter("codigoParada", stopCode.ToString());
 
-            var response = restClient.Execute(request);
-
-            ThrownIfExceptionFound(response, DefaultValidStatus);
-
-            return JsonConvert.DeserializeObject<ForecastWithLine>(response.Content);
+            return Execute<ForecastWithLine>(request);
         }
     }
 }

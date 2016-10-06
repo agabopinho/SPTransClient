@@ -12,7 +12,7 @@ namespace SPTransClient
         {
             if (string.IsNullOrWhiteSpace(token))
             {
-                throw new ArgumentException("token");
+                throw new ArgumentException(nameof(token));
             }
 
             this.Token = token;

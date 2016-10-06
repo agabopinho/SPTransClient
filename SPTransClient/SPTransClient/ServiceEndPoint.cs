@@ -14,7 +14,7 @@ namespace SPTransClient
         {
             if (string.IsNullOrWhiteSpace(url))
             {
-                throw new ArgumentException("searchTerm");
+                throw new ArgumentException(nameof(url));
             }
 
             this.Url = url;
