@@ -41,7 +41,7 @@ namespace SPTransClient
 
         public CookieContainer Container { get; } = new CookieContainer();
 
-        protected virtual RestClient CreateClient(string url)
+        public virtual RestClient CreateClient(string url)
         {
             var restClient = new RestClient(url);
 
@@ -50,7 +50,7 @@ namespace SPTransClient
             return restClient;
         }
 
-        protected virtual RestRequest CreateRequest(string resource, Method method)
+        public virtual RestRequest CreateRequest(string resource, Method method)
         {
             var request = new RestRequest(resource, method);
 
