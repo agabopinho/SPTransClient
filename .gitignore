@@ -240,4 +240,4 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
-/SPTransClient/SPTransClientTests/App.Local.config
+App.Local.config
