@@ -35,13 +35,20 @@
       }
     },
 
-    "netstandard1.6": {
+    "uap10": {
+      "dependencies": {
+        "System.Net.Http": "4.0.0",
+        "System.Linq": "4.0.0"
+      }
+    },
+
+    "netstandard1.1": {
       "dependencies": {
         "NETStandard.Library": "1.6.0"
       }
     },
 
-    "netcoreapp2.0": {
+    "netcoreapp1.0": {
       "dependencies": {
         "NETStandard.Library": "1.6.0"
       }
