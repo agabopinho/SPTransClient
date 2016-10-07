@@ -2,7 +2,7 @@
 
 #### Nuget
 
-* [.NET 4.5 e .NET Standard 1.6] (https://www.nuget.org/packages/SPTransClient/)
+* [.NET 4.5, 4.6 e .NET Core] (https://www.nuget.org/packages/SPTransClient/)
 
 #### Exemplo de uso
 ```
