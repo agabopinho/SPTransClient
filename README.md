@@ -10,7 +10,7 @@
 
 #### Exemplo de uso
 ```
-var credential = new Credential("YOUT CREDENTIAL");
+var credential = new Credential("YOUR CREDENTIAL");
 var client = new Client(ServiceEndPoint.Production, credential);
 
 // necessário para API
