@@ -75,7 +75,7 @@ namespace SPTransClient
             return await Execute<bool>(request);
         }
 
-        public async virtual Task<IEnumerable<Bus>> Bus(string terms)
+        public async virtual Task<IEnumerable<Bus>> FindBus(string terms)
         {
             if (string.IsNullOrWhiteSpace(terms))
             {
@@ -99,7 +99,7 @@ namespace SPTransClient
             return await Execute<IEnumerable<Bus>>(request);
         }
 
-        public async virtual Task<IEnumerable<Stop>> Stop(string terms)
+        public async virtual Task<IEnumerable<Stop>> FindStop(string terms)
         {
             if (string.IsNullOrWhiteSpace(terms))
             {
@@ -154,7 +154,7 @@ namespace SPTransClient
             return await Execute<Position>(request);
         }
 
-        public async virtual Task<ForecastWithLine> StopForecastPerStopAndLine(long stopCode, long lineCode)
+        public async virtual Task<ForecastWithLine> ForecastPerStopAndLine(long stopCode, long lineCode)
         {
             if (stopCode <= 0)
             {
@@ -171,7 +171,7 @@ namespace SPTransClient
             return await Execute<ForecastWithLine>(request);
         }
 
-        public async virtual Task<ForecastWithGeolocation> StopForecastPerLine(long lineCode)
+        public async virtual Task<ForecastWithGeolocation> ForecastPerLine(long lineCode)
         {
             if (lineCode <= 0)
             {
@@ -183,7 +183,7 @@ namespace SPTransClient
             return await Execute<ForecastWithGeolocation>(request);
         }
 
-        public async virtual Task<ForecastWithLine> StopForecastPerStop(long stopCode)
+        public async virtual Task<ForecastWithLine> ForecastPerStop(long stopCode)
         {
             if (stopCode <= 0)
             {
