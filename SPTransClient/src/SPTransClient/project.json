@@ -1,7 +1,7 @@
 {
   "title": "SPTrans API Client",
   "description": "Cliente para o serviço de localização de ônibus da SPTrans.",
-  "version": "1.0.4-*",
+  "version": "1.0.6-*",
   "copyright": "Copyright 2016",
   "authors": [ "Ágabo D. de Pinho (https://github.com/agaboduarte)" ],
   "packOptions": {
