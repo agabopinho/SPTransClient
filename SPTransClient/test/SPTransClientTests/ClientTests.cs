@@ -1,8 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SPTransClient;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,11 +18,18 @@ namespace SPTransClient.Tests
         [TestInitialize]
         public void Initialize()
         {
-            credential = new Credential(ConfigurationManager.AppSettings["SPTrans.ApiToken"]);
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile("appsettings.secrets.json", true);
 
-            if (credential.Token == "{SPTRANS-TOKEN}")
+            var configuration = builder.Build();
+
+            credential = new Credential(configuration["appSettings:SPTrans.Api:Token"]);
+
+            if (credential.Token == "REPLACE WITH YOUR TOKEN")
             {
-                throw new ConfigurationErrorsException("Configure token with AppSetting Key=SPTrans.ApiToken");
+                throw new ArgumentException("appSettings:SPTrans.Api:Token", "Configure your token in appSettings.json");
             }
         }
 
@@ -29,10 +37,10 @@ namespace SPTransClient.Tests
         public async Task BusTest()
         {
             var client = new Client(ServiceEndPoint.Production, credential);
- 
+
             Assert.IsTrue(await client.Authenticate());
 
-            var bus = await client.Bus("terminal campo limpo");
+            var bus = await client.FindBus("terminal campo limpo");
 
             Assert.IsNotNull(bus);
             Assert.IsTrue(bus.Count() > 0);
@@ -42,7 +50,7 @@ namespace SPTransClient.Tests
         public async Task BusesDetailsTest()
         {
             var client = new Client(ServiceEndPoint.Production, credential);
-            
+
             Assert.IsTrue(await client.Authenticate());
 
             var bus = client.BusDetails(1877);
@@ -70,7 +78,7 @@ namespace SPTransClient.Tests
 
             Assert.IsTrue(await client.Authenticate());
 
-            var stops = await client.Stop("Av Paulista");
+            var stops = await client.FindStop("Av Paulista");
 
             Assert.IsNotNull(stops);
         }
@@ -94,7 +102,7 @@ namespace SPTransClient.Tests
 
             Assert.IsTrue(await client.Authenticate());
 
-            var line = await client.StopForecastPerLine(1877);
+            var line = await client.ForecastPerLine(1877);
 
             Assert.IsNotNull(line);
             Assert.IsNotNull(line.Stop);
@@ -107,7 +115,7 @@ namespace SPTransClient.Tests
 
             Assert.IsTrue(await client.Authenticate());
 
-            var stop = await client.StopForecastPerStop(340015740);
+            var stop = await client.ForecastPerStop(340015740);
 
             Assert.IsNotNull(stop);
             Assert.IsNotNull(stop.Stop);
@@ -120,7 +128,7 @@ namespace SPTransClient.Tests
 
             Assert.IsTrue(await client.Authenticate());
 
-            var stop = await client.StopForecastPerStopAndLine(340015740, 32815);
+            var stop = await client.ForecastPerStopAndLine(340015740, 32815);
 
             Assert.IsNotNull(stop);
             Assert.IsNotNull(stop.Stop);
